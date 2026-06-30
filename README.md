@@ -52,7 +52,16 @@ In the previous implementation of the `useProfileStore` hook, several components
   - Adding **Vitest** provided a fast, native testing environment that works seamlessly with Vite.
   - The test suite effectively covers the Zustand store's core logic (preventing duplicate additions, removing profiles, toggling the sidebar) and the pure filtering functions, ensuring long-term stability.
 
-### 5. Architectural Assumptions & Trade-offs
+### 5. Unified Platform Search & Multi-Platform Discovery System
+
+#### Observation: Single-Platform Siloed Search
+- **The Flaw:** Search was restricted to the currently selected active platform (Instagram, YouTube, or TikTok). If a user wanted to search for a creator across all platforms, or didn't know which platform they were active on, they had to click through each tab individually and repeat the search.
+- **The Fix:**
+  - **All Platforms View:** Introduced an `"all"` platform selection tab ("✨ All Platforms") that aggregates and displays profiles from Instagram, YouTube, and TikTok in a single unified view.
+  - **Platform-Name Queries:** Enhanced the filtering function to match against platform names. A user can now type "youtube", "instagram", or "tiktok" directly into the search bar to filter the active view to only that platform's creators.
+  - **Dynamic Badges:** Added stylized, custom color-themed platform badges to both the `ProfileCard` and the `SelectedProfileItem` inside the sidebar. This makes it instantly clear which platform each influencer belongs to, especially when browsing in the unified "All" view.
+
+### 6. Architectural Assumptions & Trade-offs
 
 - **Zustand over Context:** The project originally seemed to hint at React Context, but moving to Zustand was the correct architectural choice for this specific use case. Zustand is lighter, doesn't require wrapping the app in provider components, and completely avoids the React Context re-render cascading issues when used with fine-grained selectors.
 - **Bundle Size:** The inclusion of Framer Motion does increase the JavaScript bundle size slightly. However, given the assignment's strong emphasis on "visual delight" and premium UX, this is an acceptable trade-off for the substantial improvement in user perception.

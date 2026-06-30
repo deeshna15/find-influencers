@@ -57,9 +57,16 @@ function SelectedProfileItemInner({ profile }: SelectedProfileItemProps) {
         <p className="text-xs text-gray-600 dark:text-gray-400 truncate font-medium">
           {profile.fullname}
         </p>
-        <p className="text-xs text-gray-500 dark:text-gray-500 font-semibold">
-          {formatFollowers(profile.followers)} followers
-        </p>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-gray-500 dark:text-gray-500 font-semibold">
+            {formatFollowers(profile.followers)} followers
+          </span>
+          {profile.platform && (
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 capitalize">
+              {profile.platform}
+            </span>
+          )}
+        </div>
       </div>
 
       <motion.button

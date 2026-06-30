@@ -4,7 +4,6 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Plus, Check } from "lucide-react";
 import clsx from "clsx";
 import type { Platform, UserProfileSummary } from "@/types";
-import { VerifiedBadge } from "@/components/ui/VerifiedBadge";
 import { formatFollowers } from "@/utils/formatters";
 import { useProfileStore } from "@/store/useProfileStore";
 import { useToastStore } from "@/store/useToastStore";
@@ -58,7 +57,7 @@ function ProfileCardInner({
   // Create motion values for glow effect (must be unconditional)
   const glowBackground = useTransform(
     [mouseX, mouseY],
-    ([x, y]) =>
+    ([x, y]: any[]) =>
       `radial-gradient(200px circle at ${(x + 0.5) * 100}% ${(y + 0.5) * 100}%, rgba(139, 92, 246, 0.25), transparent 70%)`
   );
 
@@ -156,10 +155,25 @@ function ProfileCardInner({
       </motion.div>
 
       <div className="relative z-10 flex-1 text-left min-w-0">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex flex-wrap items-center gap-2 mb-1">
           <span className="font-bold text-gray-900 dark:text-white truncate text-lg group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
             @{profile.username}
           </span>
+          {platform === "instagram" && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 border border-pink-200/50 dark:border-pink-800/30">
+              📸 Instagram
+            </span>
+          )}
+          {platform === "youtube" && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200/50 dark:border-red-800/30">
+              ▶️ YouTube
+            </span>
+          )}
+          {platform === "tiktok" && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 border border-teal-200/50 dark:border-teal-800/30">
+              🎵 TikTok
+            </span>
+          )}
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-300 truncate font-medium">
           {profile.fullname}

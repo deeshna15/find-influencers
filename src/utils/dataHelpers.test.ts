@@ -43,4 +43,35 @@ describe('filterProfiles', () => {
     const result = filterProfiles(mockProfiles, 'charlie');
     expect(result).toHaveLength(0);
   });
+
+  it('filters by platform name (case-insensitive)', () => {
+    const profilesWithPlatforms: UserProfileSummary[] = [
+      ...mockProfiles,
+      {
+        user_id: '3',
+        username: 'charlie',
+        fullname: 'Charlie Brown',
+        picture: '',
+        is_verified: false,
+        followers: 300,
+        platform: 'youtube',
+      } as UserProfileSummary,
+      {
+        user_id: '4',
+        username: 'diana',
+        fullname: 'Diana Ross',
+        picture: '',
+        is_verified: true,
+        followers: 400,
+        platform: 'instagram',
+      } as UserProfileSummary,
+    ];
+    const result = filterProfiles(profilesWithPlatforms, 'youtube');
+    expect(result).toHaveLength(1);
+    expect(result[0].username).toBe('charlie');
+
+    const resultInsta = filterProfiles(profilesWithPlatforms, 'INSTAGRAM');
+    expect(resultInsta).toHaveLength(1);
+    expect(resultInsta[0].username).toBe('diana');
+  });
 });

@@ -1,7 +1,7 @@
 import instagramData from "@/assets/data/search/instagram.json";
 import youtubeData from "@/assets/data/search/youtube.json";
 import tiktokData from "@/assets/data/search/tiktok.json";
-import type { Platform, SearchData, UserProfileSummary } from "@/types";
+import type { Platform, PlatformFilterType, SearchData, UserProfileSummary } from "@/types";
 
 const platformData: Record<Platform, SearchData> = {
   instagram: instagramData as SearchData,
@@ -15,7 +15,13 @@ export function getSearchData(platform: Platform): SearchData {
 
 export function extractProfiles(platform: Platform): UserProfileSummary[] {
   const data = getSearchData(platform);
-  return data.accounts.map((item) => item.account.user_profile);
+  return data.accounts.map((item) => {
+    const profile = item.account.user_profile;
+    return {
+      ...profile,
+      platform,
+    };
+  });
 }
 
 export function filterProfiles(
@@ -27,13 +33,15 @@ export function filterProfiles(
   return profiles.filter(
     (p) =>
       p.username.toLowerCase().includes(lowerQuery) ||
-      p.fullname.toLowerCase().includes(lowerQuery)
+      p.fullname.toLowerCase().includes(lowerQuery) ||
+      (p.platform && p.platform.toLowerCase().includes(lowerQuery))
   );
 }
 
 export const PLATFORMS: Platform[] = ["instagram", "youtube", "tiktok"];
 
-export function getPlatformLabel(platform: Platform): string {
+export function getPlatformLabel(platform: PlatformFilterType): string {
+  if (platform === "all") return "All Platforms";
   if (platform === "instagram") return "Instagram";
   if (platform === "youtube") return "YouTube";
   return "TikTok";

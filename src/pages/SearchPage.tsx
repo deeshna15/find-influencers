@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import type { Platform } from "@/types";
+import type { PlatformFilterType } from "@/types";
 import { Layout } from "@/components/layout/Layout";
 import { PlatformFilter } from "@/components/search/PlatformFilter";
 import { ProfileList } from "@/components/profile/ProfileList";
@@ -13,17 +13,22 @@ import clsx from "clsx";
 export type SortOption = "default" | "followers_desc" | "followers_asc";
 
 export function SearchPage() {
-  const [platform, setPlatform] = useState<Platform>("instagram");
+  const [platform, setPlatform] = useState<PlatformFilterType>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   
   const [sortBy, setSortBy] = useState<SortOption>("default");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
 
-  const allProfiles = useMemo(
-    () => extractProfiles(platform),
-    [platform]
-  );
+  const allProfiles = useMemo(() => {
+    if (platform === "all") {
+      const instagram = extractProfiles("instagram");
+      const youtube = extractProfiles("youtube");
+      const tiktok = extractProfiles("tiktok");
+      return [...instagram, ...youtube, ...tiktok];
+    }
+    return extractProfiles(platform);
+  }, [platform]);
 
   const filteredAndSorted = useMemo(() => {
     let result = filterProfiles(allProfiles, debouncedSearchQuery);
@@ -41,7 +46,7 @@ export function SearchPage() {
     return result;
   }, [allProfiles, debouncedSearchQuery, verifiedOnly, sortBy]);
 
-  const handlePlatformChange = useCallback((p: Platform) => {
+  const handlePlatformChange = useCallback((p: PlatformFilterType) => {
     setPlatform(p);
     setSearchQuery("");
   }, []);
@@ -130,7 +135,7 @@ export function SearchPage() {
           </motion.span>{" "}
           of {allProfiles.length} on{" "}
           <span className="font-bold bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent capitalize">
-            {platform}
+            {platform === "all" ? "all platforms" : platform}
           </span>
         </motion.p>
 

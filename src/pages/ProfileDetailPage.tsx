@@ -14,9 +14,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import clsx from "clsx";
 import { Layout } from "@/components/layout/Layout";
-import { VerifiedBadge } from "@/components/ui/VerifiedBadge";
 import { StatCard } from "@/components/ui/StatCard";
 import { Button } from "@/components/ui/Button";
 import type { FullUserProfile, ProfileDetailResponse } from "@/types";
@@ -159,6 +157,7 @@ export function ProfileDetailPage() {
         engagement_rate: user.engagement_rate,
         handle: user.handle,
         avg_views: user.avg_views,
+        platform: (platform === "instagram" || platform === "youtube" || platform === "tiktok") ? platform : undefined,
       });
       toggleSidebar();
     }

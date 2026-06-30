@@ -1,12 +1,12 @@
 import { memo } from "react";
 import { Users } from "lucide-react";
 import { motion } from "framer-motion";
-import type { Platform, UserProfileSummary } from "@/types";
+import type { PlatformFilterType, UserProfileSummary } from "@/types";
 import { ProfileCard } from "./ProfileCard";
 
 interface ProfileListProps {
   profiles: UserProfileSummary[];
-  platform: Platform;
+  platform: PlatformFilterType;
   onProfileClick: (username: string) => void;
 }
 
@@ -20,10 +20,7 @@ const listVariants = {
   },
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 15 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-};
+
 
 function ProfileListInner({
   profiles,
@@ -73,7 +70,7 @@ function ProfileListInner({
         <ProfileCard
           key={profile.user_id}
           profile={profile}
-          platform={platform}
+          platform={profile.platform || (platform === "all" ? "instagram" : platform)}
           onProfileClick={onProfileClick}
           variants={{
             hidden: { opacity: 0, y: 20, scale: 0.9 },

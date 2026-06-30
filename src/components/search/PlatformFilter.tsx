@@ -2,18 +2,21 @@ import { memo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
-import type { Platform } from "@/types";
-import { PLATFORMS, getPlatformLabel } from "@/utils/dataHelpers";
+import type { PlatformFilterType } from "@/types";
+import { getPlatformLabel } from "@/utils/dataHelpers";
 
-const PLATFORM_ICONS: Record<Platform, string> = {
+const PLATFORM_ICONS: Record<PlatformFilterType, string> = {
+  all: "✨",
   instagram: "📸",
   youtube: "▶️",
   tiktok: "🎵",
 };
 
+const PLATFORMS_FILTER_OPTIONS: PlatformFilterType[] = ["all", "instagram", "youtube", "tiktok"];
+
 interface PlatformFilterProps {
-  selected: Platform;
-  onChange: (platform: Platform) => void;
+  selected: PlatformFilterType;
+  onChange: (platform: PlatformFilterType) => void;
   searchQuery: string;
   onSearchChange: (value: string) => void;
 }
@@ -34,7 +37,7 @@ function PlatformFilterInner({
         transition={{ delay: 0.1 }}
         className="flex flex-wrap gap-3 justify-center bg-white/40 dark:bg-gray-800/40 p-2 rounded-3xl w-fit mx-auto border border-violet-200/50 dark:border-violet-800/30 backdrop-blur-xl shadow-lg"
       >
-        {PLATFORMS.map((p, idx) => (
+        {PLATFORMS_FILTER_OPTIONS.map((p, idx) => (
           <motion.button
             key={p}
             type="button"
@@ -67,10 +70,9 @@ function PlatformFilterInner({
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
+        animate={{ opacity: 1, scale: isSearchFocused ? 1.05 : 1 }}
         transition={{ delay: 0.2 }}
         className="relative max-w-md mx-auto"
-        animate={{ scale: isSearchFocused ? 1.05 : 1 }}
       >
         <motion.div
           animate={{
