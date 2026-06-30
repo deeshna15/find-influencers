@@ -2,6 +2,8 @@
 
 A modernized influencer search application built with **React**, **TypeScript**, **Vite**, **Tailwind CSS 4**, and **Zustand**.
 
+**Live Demo:** [stellar-seahorse-3032b1.netlify.app](https://stellar-seahorse-3032b1.netlify.app/)
+
 ## Getting Started
 
 ```bash
