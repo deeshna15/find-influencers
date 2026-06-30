@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from "react";
 import { X, Trash2, ListChecks } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
 import clsx from "clsx";
 import { useProfileStore } from "@/store/useProfileStore";
 import { SelectedProfileItem } from "./SelectedProfileItem";
@@ -122,14 +122,19 @@ export function SelectedProfilesSidebar() {
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <Reorder.Group
+                    axis="y"
+                    values={selectedProfiles}
+                    onReorder={useProfileStore.getState().reorderProfiles}
+                    className="space-y-2 list-none p-0 m-0"
+                  >
                     {selectedProfiles.map((profile) => (
                       <SelectedProfileItem
                         key={profile.user_id}
                         profile={profile}
                       />
                     ))}
-                  </div>
+                  </Reorder.Group>
                 )}
               </div>
             </div>

@@ -11,6 +11,7 @@ interface ProfileListState {
   toggleSidebar: () => void;
   setSidebarOpen: (open: boolean) => void;
   isInList: (userId: string) => boolean;
+  reorderProfiles: (profiles: UserProfileSummary[]) => void;
 }
 
 export const useProfileStore = create<ProfileListState>()(
@@ -41,6 +42,8 @@ export const useProfileStore = create<ProfileListState>()(
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
 
       isInList: (userId) => get().selectedProfiles.some((p) => p.user_id === userId),
+
+      reorderProfiles: (profiles) => set({ selectedProfiles: profiles }),
     }),
     {
       name: "selected-profiles",
