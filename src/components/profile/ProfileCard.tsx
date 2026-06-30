@@ -55,6 +55,13 @@ function ProfileCardInner({
     mouseY.set(0);
   };
 
+  // Create motion values for glow effect (must be unconditional)
+  const glowBackground = useTransform(
+    [mouseX, mouseY],
+    ([x, y]) =>
+      `radial-gradient(200px circle at ${(x + 0.5) * 100}% ${(y + 0.5) * 100}%, rgba(139, 92, 246, 0.25), transparent 70%)`
+  );
+
   const handleCardClick = useCallback(() => {
     if (onProfileClick) onProfileClick(profile.username);
     navigate(`/profile/${profile.username}?platform=${platform}`);
@@ -118,18 +125,13 @@ function ProfileCardInner({
       />
 
       {/* Interactive Glow Effect */}
-      {isHovered && (
-        <motion.div
-          className="pointer-events-none absolute inset-0 z-0"
-          style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([x, y]) =>
-                `radial-gradient(200px circle at ${(x + 0.5) * 100}% ${(y + 0.5) * 100}%, rgba(139, 92, 246, 0.25), transparent 70%)`
-            ),
-          }}
-        />
-      )}
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          background: glowBackground,
+          opacity: isHovered ? 1 : 0,
+        }}
+      />
 
       <motion.div
         whileHover={{ scale: 1.15, rotate: 5 }}
