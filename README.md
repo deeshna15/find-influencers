@@ -78,6 +78,35 @@ I transformed the static template into a full-featured, responsive, and aestheti
 
 ---
 
+## Technical Details
+
+### 1. Libraries Added
+To elevate the user experience, styling, reactivity, and reliability, the following packages were installed:
+- **`zustand`**: Light, robust state management with middleware support to store the shortlist.
+- **`framer-motion`**: Handled spring-based layout animations, hover reactions, and drawer transitions.
+- **`lucide-react`**: Provided crisp, modern SVG icons for platform identification and controls.
+- **`vitest` & `jsdom`**: Configured for local, lightning-fast component and unit testing.
+- **`clsx` & `tailwind-merge`**: Used to safely handle dynamic styling classes without Tailwind conflicts.
+
+### 2. Assumptions Made
+- **Local Data Caching**: I assumed the influencer database is managed locally for this version of the application, meaning all search, sorting, and platform operations can be safely performed client-side.
+- **Persistent Curation**: I assumed that users would expect their selected list to persist between sessions, which led to the integration of Zustand's `persist` local-storage engine.
+- **Responsive Layout**: I assumed the curation dashboard must be equally usable on mobile screens and large displays, designing the sidebar as a slide-over panel on smaller viewports.
+
+### 3. Technical Trade-offs
+- **Bundle Size vs. Visual Delight**: Adding `framer-motion` slightly increases the Javascript bundle footprint. However, the visual responsiveness, micro-interactions, and premium feel it provides align perfectly with the dashboard's design goals.
+- **Client-Side vs. API Filtering**: Client-side filtering allows for zero-latency, immediate results. If the database scales to thousands of entries, this would eventually require migration to paginated server-side APIs.
+
+### 4. Remaining Improvements (Future Roadmap)
+If given more time, the following features would be implemented:
+- **Shortlist Exporting**: Allow users to download their curated shortlist as a CSV or PDF file for sharing.
+- **Influencer Comparison Tool**: Implement a side-by-side comparison screen to compare metrics (engagement rate, follower growth, average views) between shortlisted creators.
+- **Multiple Curation Folders**: Allow users to create custom shortlist groups (e.g., "Tech Campaign", "Summer Launch") instead of a single global shortlist.
+- **Virtualized Grid Scrolling**: Use a virtualized list to efficiently render thousands of cards without DOM performance bottlenecks.
+- **Advanced Filters**: Add sliders for follower count ranges, engagement rate thresholds, and category selector dropdowns.
+
+---
+
 ## Commands
 
 | Command        | Description                             |
@@ -89,4 +118,3 @@ I transformed the static template into a full-featured, responsive, and aestheti
 
 ---
 
-**Developed & Modernized with ❤️ for Wobb Frontend Assignment.**
