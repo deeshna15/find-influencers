@@ -3,6 +3,7 @@ import type { Platform } from "@/types";
 import { Layout } from "@/components/layout/Layout";
 import { PlatformFilter } from "@/components/search/PlatformFilter";
 import { ProfileList } from "@/components/profile/ProfileList";
+import { InfluencerBackground } from "@/components/background/InfluencerBackground";
 import { extractProfiles, filterProfiles } from "@/utils/dataHelpers";
 import { useDebounce } from "@/hooks/useDebounce";
 import { motion } from "framer-motion";
@@ -58,6 +59,7 @@ export function SearchPage() {
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
     >
+      <InfluencerBackground profiles={allProfiles} />
       <Layout title="Find Influencers">
         <motion.p
           initial={{ opacity: 0 }}
