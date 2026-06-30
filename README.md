@@ -1,6 +1,6 @@
-# Wobb Frontend Assignment
+# Wobb Frontend Assignment - Solution
 
-A starter influencer search application built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. This project is intentionally left in a rough-but-working state for candidates to improve.
+A modernized influencer search application built with **React**, **TypeScript**, **Vite**, **Tailwind CSS 4**, and **Zustand**.
 
 ## Getting Started
 
@@ -9,72 +9,59 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) to view the app.
+To run the test suite:
+```bash
+npm run test
+```
 
-## What's Included
+## Project Observations & Technical Findings
 
-- **Search / Dashboard** — filter influencers by platform (Instagram, YouTube, TikTok) and search by username or full name
-- **Profile Details** — click a profile to view extended data loaded from individual JSON files
-- **Routing** — `react-router-dom` with `/` (search) and `/profile/:username` (details)
+Based on my comprehensive review of the Wobb frontend application before and after modernization, here is a detailed log of the key technical observations and architectural findings.
 
-Sample data lives in:
+### 1. State Management & Reactivity (Zustand)
 
-- `src/assets/data/search/` — platform search results (10 profiles each)
-- `src/assets/data/profiles/` — detailed profile JSON per username
+#### Observation: Destructuring Reactivity Bug
+In the previous implementation of the `useProfileStore` hook, several components were incorrectly subscribing to the Zustand store.
+- **The Flaw:** Components like `Layout.tsx` and `SelectedProfilesSidebar.tsx` were calling the hook and destructuring the entire state object:
+  ```tsx
+  const { selectedProfiles, toggleSidebar } = useProfileStore();
+  ```
+- **Impact:** This approach caused the components to re-render whenever *any* state in the store changed (even unrelated state), rather than only when the specific properties they cared about changed. This is a common anti-pattern in Zustand usage.
+- **The Fix:** Transitioning to fine-grained selector callbacks (e.g., `const selectedProfiles = useProfileStore(s => s.selectedProfiles);`) correctly limits re-renders to only occur when the explicitly selected state updates, massively improving rendering efficiency.
 
-## How to Submit
+### 2. Performance: Search Optimization
 
-1. **Download or clone** this starter project to your machine.
-2. **Create a new repository** on your own GitHub account. Do not fork the original assignment repo — push your work to a repo you own.
-3. Complete the tasks below and push your changes to that repository.
-4. **Share the public GitHub repository URL** with us as your submission.
+#### Observation: Expensive Computations on Keystroke
+- **The Flaw:** The search functionality was triggering the `filterProfiles` utility function synchronously on every single keystroke. For a potentially large list of influencer profiles, doing string matching and filtering on every key press can cause significant input lag and jank.
+- **The Fix:** The introduction of the custom `useDebounce` hook resolves this by delaying the execution of the filtering logic until the user pauses typing for 300ms. This prevents main-thread blocking during rapid typing.
 
-### Deadline (strict)
+### 3. UI/UX Architecture
 
-- **Due:** **2 July 2026, 2:00 PM IST** (Indian Standard Time, UTC+5:30)
-- **Any git commits made after this deadline will disqualify your submission.** We will only consider the repository state as of the deadline; late commits will not be reviewed.
-- Make sure your final work is pushed **before** the cutoff.
+#### Observation: Static Interface
+- **The Flaw:** The application initially featured a rigid, static interface that lacked visual hierarchy and micro-interactions, leading to an unengaging user experience.
+- **The Fix:** 
+  - **Framer Motion:** Integrating Framer Motion provided an immediate UX uplift through fluid layout animations, bouncy spring transitions for the sidebar, and subtle hover scale effects on the profile cards.
+  - **Glassmorphism System:** Moving away from standard solid backgrounds to a translucent, blurred backdrop (`backdrop-blur-xl`) layered over dynamic gradients modernized the visual aesthetic considerably.
+  - **Typography:** The shift from generic system fonts to premium Google Fonts (`Outfit` for crisp headers, `Inter` for readable body text) established a much stronger brand feel.
 
-## AI Usage
+### 4. Code Quality & Testability
 
-You may use any AI tools (Cursor, ChatGPT, Claude, GitHub Copilot, etc.). We are evaluating your final solution and engineering decisions.
+#### Observation: Lack of Automated Verification
+- **The Flaw:** The project initially contained no automated testing infrastructure. This made refactoring dangerous, as changes to the profile list or filtering logic could unknowingly introduce regressions.
+- **The Fix:** 
+  - Adding **Vitest** provided a fast, native testing environment that works seamlessly with Vite.
+  - The test suite effectively covers the Zustand store's core logic (preventing duplicate additions, removing profiles, toggling the sidebar) and the pure filtering functions, ensuring long-term stability.
 
-## Your Tasks
+### 5. Architectural Assumptions & Trade-offs
 
-Complete the following as part of your submission:
+- **Zustand over Context:** The project originally seemed to hint at React Context, but moving to Zustand was the correct architectural choice for this specific use case. Zustand is lighter, doesn't require wrapping the app in provider components, and completely avoids the React Context re-render cascading issues when used with fine-grained selectors.
+- **Bundle Size:** The inclusion of Framer Motion does increase the JavaScript bundle size slightly. However, given the assignment's strong emphasis on "visual delight" and premium UX, this is an acceptable trade-off for the substantial improvement in user perception.
 
-1. **Find and fix all bugs and quality issues** — the codebase contains intentional bugs and quality issues. Identify and resolve them.
-
-2. **Completely redesign the UI/UX** — replace the basic layout with a polished, modern interface. Focus on usability, visual hierarchy, and delight.
-
-3. **Replace React Context with Zustand** — when you implement state management for the selected list, use [Zustand](https://github.com/pmndrs/zustand) instead of React Context.
-
-4. **Implement "Select profile & Add to List"** — the disabled "Add to List" button is a stub. Build the full feature:
-   - Select / add profiles to a persistent list
-   - View and manage the selected list
-   - Handle duplicates appropriately
-
-5. **Improve code quality and project structure** — refactor as needed, add proper types, and follow React best practices.
-
-6. **Optimize performance** — apply sensible optimizations where appropriate.
-
-7. **Use any libraries you need** — you are not limited to the current stack. Choose tools that help you deliver a great result (UI kits, state managers, testing libraries, etc.).
-
-## Scripts
+## Commands
 
 | Command        | Description              |
 | -------------- | ------------------------ |
 | `npm run dev`  | Start development server |
 | `npm run build`| Production build         |
 | `npm run lint` | Run ESLint               |
-
-## Submission Notes
-
-- Document any assumptions or trade-offs in your README
-- Ensure `npm run build` passes before submitting
-- Focus on demonstrating your judgment — not every possible feature needs to be built, but the core assignment items should be addressed thoughtfully
-- Double-check that your repo is public (or that we have access) and that the link is included in your submission
-- Please make meaningful commits throughout your work. We may review your commit history.
-- **Bonus:** Deploying the app (e.g. Vercel, Netlify, GitHub Pages) is optional but will be considered a plus — include the live URL in your submission if you do
-
-Good luck!
+| `npm run test` | Run Unit Tests (Vitest)  |
