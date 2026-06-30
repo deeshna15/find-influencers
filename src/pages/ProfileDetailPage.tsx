@@ -172,132 +172,204 @@ export function ProfileDetailPage() {
       transition={{ duration: 0.3 }}
     >
       <Layout title={user.fullname}>
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors mb-6 bg-white/50 dark:bg-gray-800/50 px-4 py-2 rounded-xl backdrop-blur-sm"
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
         >
-          <ArrowLeft className="w-4 h-4" />
-          Back to search
-        </Link>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm font-bold text-white bg-gradient-to-r from-violet-600 to-pink-500 hover:from-violet-700 hover:to-pink-600 px-4 py-2.5 rounded-xl shadow-lg shadow-violet-500/30 transition-all hover:scale-105 active:scale-95 mb-6"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to search
+          </Link>
+        </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, type: "spring" }}
           className="max-w-2xl mx-auto"
         >
-          <div className="glass-panel rounded-2xl p-6 sm:p-8">
-            <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
-              <img
-                src={user.picture}
-                alt={`${user.fullname}'s avatar`}
-                className="w-24 h-24 rounded-full ring-4 ring-gray-100 dark:ring-gray-700 shadow-lg"
-              />
+          <div className="glass-panel rounded-3xl p-6 sm:p-10 border border-white/60 dark:border-gray-700/60 shadow-2xl">
+            <div className="flex flex-col sm:flex-row gap-8 items-center sm:items-start">
+              <motion.div
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="relative"
+              >
+                <div className="absolute -inset-2 bg-gradient-to-r from-violet-500 via-pink-500 to-cyan-500 rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity" />
+                <img
+                  src={user.picture}
+                  alt={`${user.fullname}'s avatar`}
+                  className="relative w-32 h-32 rounded-full ring-4 ring-white dark:ring-gray-800 shadow-2xl object-cover"
+                />
+                {user.is_verified && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -bottom-2 -right-2 bg-gradient-to-r from-violet-600 to-pink-500 p-2 rounded-full shadow-lg"
+                  >
+                    <Check className="w-6 h-6 text-white" />
+                  </motion.div>
+                )}
+              </motion.div>
               <div className="flex-1 text-center sm:text-left">
-                <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                <div className="flex items-center justify-center sm:justify-start gap-2.5 mb-2">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-violet-600 via-pink-500 to-cyan-500 bg-clip-text text-transparent">
                     @{user.username}
                   </h2>
-                  <VerifiedBadge verified={user.is_verified} size="md" />
                 </div>
-                <p className="text-gray-500 dark:text-gray-400 mt-0.5">
+                <p className="text-lg text-gray-700 dark:text-gray-200 font-semibold mt-1">
                   {user.fullname}
                 </p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 capitalize">
+                <p className="text-sm text-violet-600 dark:text-violet-400 mt-2 font-bold capitalize inline-block px-3 py-1 rounded-full bg-violet-100 dark:bg-violet-900/30">
                   {platform}
                 </p>
 
                 {user.description && (
-                  <p className="mt-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                    {user.description}
+                  <p className="mt-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed italic">
+                    "{user.description}"
                   </p>
                 )}
 
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-6 flex flex-wrap gap-3">
                   {user.url && (
-                    <a
+                    <motion.a
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       href={user.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={clsx(
-                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium",
-                        "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300",
-                        "hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                      )}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 shadow-lg shadow-cyan-500/30 transition-all"
                     >
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <ExternalLink className="w-4 h-4" />
                       View on platform
-                    </a>
+                    </motion.a>
                   )}
-                  <Button
-                    onClick={handleAddToList}
-                    variant={inList ? "secondary" : "primary"}
-                    size="sm"
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    {inList ? (
-                      <>
-                        <Check className="w-3.5 h-3.5" />
-                        In List
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-3.5 h-3.5" />
-                        Add to List
-                      </>
-                    )}
-                  </Button>
+                    <Button
+                      onClick={handleAddToList}
+                      variant={inList ? "secondary" : "primary"}
+                      size="md"
+                      className={inList ? "bg-gradient-to-r from-violet-600 to-pink-500 text-white shadow-lg shadow-pink-500/30" : ""}
+                    >
+                      {inList ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          In My List
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-4 h-4" />
+                          Add to List
+                        </>
+                      )}
+                    </Button>
+                  </motion.div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <StatCard
-              label="Followers"
-              value={formatFollowers(user.followers)}
-              icon={<Users className="w-4 h-4" />}
-            />
-            <StatCard
-              label="Engagement Rate"
-              value={formatEngagementRate(user.engagement_rate)}
-              icon={<TrendingUp className="w-4 h-4" />}
-            />
-            {user.posts_count !== undefined && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+            >
               <StatCard
-                label="Posts"
-                value={user.posts_count.toLocaleString()}
-                icon={<FileText className="w-4 h-4" />}
+                label="Followers"
+                value={formatFollowers(user.followers)}
+                icon={<Users className="w-5 h-5" />}
               />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <StatCard
+                label="Engagement Rate"
+                value={formatEngagementRate(user.engagement_rate)}
+                icon={<TrendingUp className="w-5 h-5" />}
+              />
+            </motion.div>
+            {user.posts_count !== undefined && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45 }}
+              >
+                <StatCard
+                  label="Posts"
+                  value={user.posts_count.toLocaleString()}
+                  icon={<FileText className="w-5 h-5" />}
+                />
+              </motion.div>
             )}
             {user.avg_likes !== undefined && (
-              <StatCard
-                label="Avg Likes"
-                value={formatFollowers(user.avg_likes)}
-                icon={<Heart className="w-4 h-4" />}
-              />
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <StatCard
+                  label="Avg Likes"
+                  value={formatFollowers(user.avg_likes)}
+                  icon={<Heart className="w-5 h-5" />}
+                />
+              </motion.div>
             )}
             {user.avg_comments !== undefined && (
-              <StatCard
-                label="Avg Comments"
-                value={user.avg_comments.toLocaleString()}
-                icon={<MessageCircle className="w-4 h-4" />}
-              />
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55 }}
+              >
+                <StatCard
+                  label="Avg Comments"
+                  value={user.avg_comments.toLocaleString()}
+                  icon={<MessageCircle className="w-5 h-5" />}
+                />
+              </motion.div>
             )}
             {user.avg_views !== undefined && user.avg_views > 0 && (
-              <StatCard
-                label="Avg Views"
-                value={formatFollowers(user.avg_views)}
-                icon={<Eye className="w-4 h-4" />}
-              />
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <StatCard
+                  label="Avg Views"
+                  value={formatFollowers(user.avg_views)}
+                  icon={<Eye className="w-5 h-5" />}
+                />
+              </motion.div>
             )}
             {user.engagements !== undefined && (
-              <StatCard
-                label="Engagements"
-                value={formatFollowers(user.engagements)}
-                icon={<BarChart3 className="w-4 h-4" />}
-              />
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.65 }}
+              >
+                <StatCard
+                  label="Engagements"
+                  value={formatFollowers(user.engagements)}
+                  icon={<BarChart3 className="w-5 h-5" />}
+                />
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         </motion.div>
       </Layout>
     </motion.div>

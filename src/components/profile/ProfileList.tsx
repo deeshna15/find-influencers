@@ -33,23 +33,29 @@ function ProfileListInner({
   if (profiles.length === 0) {
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="flex flex-col items-center justify-center py-16 text-center"
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col items-center justify-center py-20 text-center"
       >
         <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-16 h-16 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center mb-4 shadow-sm"
+          animate={{
+            y: [0, -15, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          className="relative mb-6"
         >
-          <Users className="w-8 h-8 text-violet-500 dark:text-violet-400" />
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-pink-500 rounded-full blur-xl opacity-30 animate-pulse" />
+          <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-violet-100 to-pink-100 dark:from-violet-900/40 dark:to-pink-900/40 flex items-center justify-center shadow-lg">
+            <Users className="w-10 h-10 text-violet-600 dark:text-violet-400" />
+          </div>
         </motion.div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
           No profiles found
         </h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm">
-          Try adjusting your search or switching platforms to find influencers.
+        <p className="text-sm text-gray-600 dark:text-gray-300 max-w-sm font-medium">
+          Try adjusting your search keywords or switching platforms to discover amazing creators!
         </p>
       </motion.div>
     );
@@ -60,16 +66,29 @@ function ProfileListInner({
       variants={listVariants}
       initial="hidden"
       animate="show"
-      key={platform} // Re-trigger animation when platform changes
-      className="space-y-2"
+      key={platform}
+      className="space-y-3 pb-4"
     >
-      {profiles.map((profile) => (
+      {profiles.map((profile, idx) => (
         <ProfileCard
           key={profile.user_id}
           profile={profile}
           platform={platform}
           onProfileClick={onProfileClick}
-          variants={itemVariants}
+          variants={{
+            hidden: { opacity: 0, y: 20, scale: 0.9 },
+            show: {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              transition: {
+                duration: 0.4,
+                delay: idx * 0.05,
+                type: "spring",
+                stiffness: 100,
+              }
+            },
+          }}
         />
       ))}
     </motion.div>

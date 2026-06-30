@@ -55,6 +55,13 @@ function ProfileCardInner({
     mouseY.set(0);
   };
 
+  // Create motion values for glow effect (must be unconditional)
+  const glowBackground = useTransform(
+    [mouseX, mouseY],
+    ([x, y]) =>
+      `radial-gradient(200px circle at ${(x + 0.5) * 100}% ${(y + 0.5) * 100}%, rgba(139, 92, 246, 0.25), transparent 70%)`
+  );
+
   const handleCardClick = useCallback(() => {
     if (onProfileClick) onProfileClick(profile.username);
     navigate(`/profile/${profile.username}?platform=${platform}`);
@@ -78,12 +85,12 @@ function ProfileCardInner({
     <motion.article
       ref={cardRef as any}
       variants={variants || {
-        hidden: { opacity: 0, y: 10 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+        hidden: { opacity: 0, y: 10, scale: 0.9 },
+        show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, type: "spring" } },
       }}
       initial={variants ? undefined : "hidden"}
       animate={variants ? undefined : "show"}
-      whileHover={{ scale: 1.01 }}
+      whileHover={{ scale: 1.03, y: -5 }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
@@ -94,8 +101,9 @@ function ProfileCardInner({
         transformPerspective: 1000,
       }}
       className={clsx(
-        "relative overflow-hidden group flex items-center gap-4 p-4 rounded-2xl cursor-pointer glass-card",
-        "transition-colors duration-200 ease-out border border-transparent dark:border-white/5"
+        "relative overflow-hidden group flex items-center gap-4 p-5 rounded-2xl cursor-pointer glass-card hover-lift",
+        "transition-all duration-300 ease-out border border-white/60 dark:border-gray-700/60",
+        isHovered && "shadow-2xl shadow-violet-500/20 dark:shadow-violet-900/30"
       )}
       role="button"
       tabIndex={0}
@@ -107,66 +115,92 @@ function ProfileCardInner({
       }}
       aria-label={`View profile of ${profile.fullname}`}
     >
-      {/* Glow Effect */}
-      {isHovered && (
-        <motion.div
-          className="pointer-events-none absolute inset-0 z-0 opacity-50"
-          style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([x, y]) =>
-                `radial-gradient(150px circle at ${(x + 0.5) * 100}% ${(y + 0.5) * 100}%, rgba(139, 92, 246, 0.15), transparent 70%)`
-            ),
-          }}
-        />
-      )}
-
-      <img
-        src={profile.picture}
-        alt={`${profile.fullname}'s avatar`}
-        className="relative z-10 w-12 h-12 rounded-full ring-2 ring-gray-100 dark:ring-gray-700 group-hover:ring-violet-200 dark:group-hover:ring-violet-800 transition-all"
-        loading="lazy"
+      {/* Gradient Border Animation */}
+      <motion.div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+        style={{
+          background: "linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2))",
+          borderRadius: "inherit",
+        }}
       />
 
+      {/* Interactive Glow Effect */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          background: glowBackground,
+          opacity: isHovered ? 1 : 0,
+        }}
+      />
+
+      <motion.div
+        whileHover={{ scale: 1.15, rotate: 5 }}
+        transition={{ type: "spring", stiffness: 300 }}
+        className="relative z-10"
+      >
+        <img
+          src={profile.picture}
+          alt={`${profile.fullname}'s avatar`}
+          className="w-16 h-16 rounded-full ring-3 ring-white dark:ring-gray-800 object-cover shadow-lg"
+          loading="lazy"
+        />
+        {profile.is_verified && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="absolute -bottom-1 -right-1 bg-gradient-to-r from-violet-600 to-pink-500 p-0.5 rounded-full"
+          >
+            <Check className="w-4 h-4 text-white" />
+          </motion.div>
+        )}
+      </motion.div>
+
       <div className="relative z-10 flex-1 text-left min-w-0">
-        <div className="flex items-center gap-1">
-          <span className="font-semibold text-gray-900 dark:text-white truncate">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="font-bold text-gray-900 dark:text-white truncate text-lg group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
             @{profile.username}
           </span>
-          <VerifiedBadge verified={profile.is_verified} />
         </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+        <p className="text-sm text-gray-600 dark:text-gray-300 truncate font-medium">
           {profile.fullname}
         </p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+        <motion.p
+          initial={{ opacity: 0.7 }}
+          whileHover={{ opacity: 1 }}
+          className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-semibold"
+        >
           {formatFollowers(profile.followers)} followers
-        </p>
+        </motion.p>
       </div>
 
-      <button
+      <motion.button
+        whileHover={{ scale: 1.1, rotate: 5 }}
+        whileTap={{ scale: 0.95 }}
         onClick={handleAddToList}
         className={clsx(
-          "relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium",
-          "transition-all duration-200",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500",
+          "relative z-10 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold",
+          "transition-all duration-300 shadow-md",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
           inList
-            ? "bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
-            : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-violet-100 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400"
+            ? "bg-gradient-to-r from-violet-600 to-pink-500 text-white shadow-lg shadow-pink-500/40 hover:shadow-pink-500/60"
+            : "bg-white/70 dark:bg-gray-700/70 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gradient-to-r hover:from-violet-500 hover:to-pink-500 hover:text-white hover:border-transparent hover:shadow-lg hover:shadow-violet-500/40"
         )}
         aria-label={inList ? `Remove ${profile.fullname} from list` : `Add ${profile.fullname} to list`}
       >
-        {inList ? (
-          <>
-            <Check className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">In List</span>
-          </>
-        ) : (
-          <>
-            <Plus className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Add</span>
-          </>
-        )}
-      </button>
+        <motion.div
+          animate={inList ? { scale: [1, 1.3, 1] } : { scale: 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          {inList ? (
+            <Check className="w-4 h-4" />
+          ) : (
+            <Plus className="w-4 h-4" />
+          )}
+        </motion.div>
+        <span className="hidden sm:inline">
+          {inList ? "In List" : "Add"}
+        </span>
+      </motion.button>
     </motion.article>
   );
 }
